@@ -27,17 +27,18 @@ export default function Login() {
   };
 
   useEffect(() => {
-    if (code) {
-      fetch(`/api/auth/callback?code=${code}`)
-        .then((res) => res.json())
-        .then((data) => {
-          if (data.access_token) {
-            localStorage.setItem("spotify_token", data.access_token);
-            window.location.replace("/search");
-          }
-        });
-    }
-  }, [code]);
+  if (code) {
+    fetch(`/api/auth/callback?code=${code}`)
+      .then((res) => res.json())
+      .then((data) => {
+        console.log("callback data", data); // <-- Agrega esto
+        if (data.access_token) {
+          localStorage.setItem("spotify_token", data.access_token);
+          window.location.replace("/search");
+        }
+      });
+  }
+}, [code]);
 
   return (
     <div className={styles.container}>
