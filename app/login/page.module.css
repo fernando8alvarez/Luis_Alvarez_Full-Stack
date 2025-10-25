@@ -1,0 +1,185 @@
+.container {
+  min-height: 100vh;
+  background-color: #1a1a1a;
+  display: flex;
+  flex-direction: column;
+}
+
+.header {
+  padding: 2rem;
+}
+
+.logo {
+  color: white;
+  font-size: 1.5rem;
+  font-weight: bold;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+}
+
+.main {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0 2rem;
+  grid-template-columns: repeat(2, 1fr);
+}
+
+.content {
+  width: 100%;
+  max-width: 80rem;
+  display: grid;
+  gap: 10rem;
+  align-items: center;
+  grid-template-columns: repeat(2, 1fr);
+}
+
+.arrowSection {
+  display: flex;
+  justify-content: center;
+}
+
+.arrowContainer {
+  position: relative;
+  width: 400px;
+  height: 400px;
+}
+
+.arrowIcon {
+  width: 100%;
+  height: 100%;
+  color: #d6f379;
+  stroke-width: 1.5;
+}
+
+.textContent {
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+}
+
+.heading {
+  font-size: 4rem;
+  font-weight: bold;
+  line-height: 1.2;
+}
+
+.headingWhite {
+  color: white;
+}
+
+.headingGreen {
+  color: #d6f379;
+}
+
+.description {
+  color: #d1d5db;
+  font-size: 1rem;
+  max-width: 28rem;
+}
+
+.loginButton {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  color: white;
+  font-size: 1.125rem;
+  font-weight: 500;
+  background: none;
+  border: none;
+  cursor: pointer;
+  transition: gap 0.3s ease;
+}
+
+.loginButton:hover {
+  gap: 1.5rem;
+}
+
+.loginText {
+  color: white;
+  font-weight: 600;
+  font-size: 1rem;
+}
+
+.arrowSmall {
+  width: 1.25rem;
+  height: 1.25rem;
+}
+
+.badgeText {
+  color: white;
+  font-weight: bold;
+  font-size: 1.25rem;
+}
+
+/* Tablets (<= 1023px) */
+@media (max-width: 1023px) {
+  .container {
+    padding: 0 3rem;
+  }
+  .main {
+    align-items: flex-start;
+    justify-content: flex-start;
+  }
+  .content {
+    display: flex;
+    flex-direction: column;
+    justify-content: start;
+    gap: 2.5rem;
+    align-items: flex-start;
+    margin-top: 4rem;
+  }
+  .arrowContainer {
+    width: 300px;
+    height: 300px;
+  }
+  .heading {
+    font-size: 4rem;
+    text-align: left;
+  }
+  .description {
+    font-size: 1.1rem;
+    text-align: left;
+  }
+  .loginButton {
+    font-size: 1.1rem;
+    align-items: flex-start;
+  }
+}
+
+/* Móviles (<= 767px) */
+@media (max-width: 767px) {
+  .container {
+    padding: 0 0.5rem;
+  }
+  .main {
+    align-items: flex-start;
+    justify-content: flex-start;
+  }
+  .content {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+    align-items: center;
+    margin-top: 4rem;
+  }
+  .arrowContainer {
+    width: 222px;
+    height: 222px;
+  }
+  .heading {
+    font-size: 2.5rem;
+    text-align: left;
+  }
+  .description {
+    font-size: 1rem;
+    text-align: left;
+  }
+  .loginButton {
+    font-size: 1rem;
+    flex-direction: column;
+    gap: 0.5rem;
+    align-items: flex-start;
+  }
+}
