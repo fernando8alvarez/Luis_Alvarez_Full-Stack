@@ -1,11 +1,44 @@
 "use client";
 import styles from "./page.module.css";
+import { useEffect, useState } from "react";
 
 export default function Login() {
+  const [code, setCode] = useState<string | null>(null);
+
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    setCode(params.get("code"));
+  }, []);
+
+  //   const isLocal =
+  //     typeof window !== "undefined" && window.location.hostname === "localhost";
+  //   const redirectUri = isLocal
+  //     ? "http://localhost:3000/login"
+  //     : "https://luis-alvarez-full-stack.vercel.app/login";
+
+  //   const handleLogin = () => {
+  //     window.location.href = `https://accounts.spotify.com/authorize?client_id=dad8def7087741a486c1873745f680fd&response_type=code&redirect_uri=${encodeURIComponent(
+  //       redirectUri
+  //     )}&scope=user-read-email%20user-library-read`;
+  //   };
+
   const handleLogin = () => {
-    window.location.href =
-      "https://accounts.spotify.com/authorize?client_id=dad8def7087741a486c1873745f680fd&response_type=code&redirect_uri=https://luis-alvarez-full-stack.vercel.app/login&scope=user-read-email%20user-library-read";
+    window.location.href = `https://accounts.spotify.com/authorize?client_id=dad8def7087741a486c1873745f680fd&response_type=code&redirect_uri=https://luis-alvarez-full-stack.vercel.app/login&scope=user-read-email%20user-library-read`;
   };
+
+  useEffect(() => {
+    if (code) {
+      fetch(`/api/auth/callback?code=${code}`)
+        .then((res) => res.json())
+        .then((data) => {
+          if (data.access_token) {
+            localStorage.setItem("spotify_token", data.access_token);
+            window.location.replace("/search");
+          }
+        });
+    }
+  }, [code]);
+
   return (
     <div className={styles.container}>
       <header className={styles.header}>
