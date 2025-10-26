@@ -170,12 +170,6 @@ export default function Search() {
                   <p className={styles.cardFollowers}>
                     Followers: {artist.followers.total}
                   </p>
-                  <button
-                    className={styles.addAlbumButton}
-                    onClick={(e) => e.stopPropagation()}
-                  >
-                    + Add album
-                  </button>
                 </div>
               ))}
             </div>

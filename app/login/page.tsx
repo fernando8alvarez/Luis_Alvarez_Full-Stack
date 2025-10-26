@@ -22,7 +22,7 @@ export default function Login() {
 
   // Login con Spotify
   const handleLogin = () => {
-    window.location.href = `https://accounts.spotify.com/authorize?client_id=dad8def7087741a486c1873745f680fd&response_type=code&redirect_uri=https://luis-alvarez-full-stack.vercel.app/login&scope=user-read-email%20user-library-read`;
+    window.location.href = `https://accounts.spotify.com/authorize?client_id=dad8def7087741a486c1873745f680fd&response_type=code&redirect_uri=https://luis-alvarez-full-stack.vercel.app/login&scope=user-read-email%20user-library-read%20user-library-modify`;
   };
 
   // EFECTOS
@@ -33,8 +33,8 @@ export default function Login() {
       fetch(`/api/auth/callback?code=${code}`)
         .then((res) => res.json())
         .then((data) => {
-          console.log("callback data", data);
           if (data.access_token) {
+            console.log(data.access_token);
             localStorage.setItem("spotify_token", data.access_token);
             window.location.replace("/search");
           }

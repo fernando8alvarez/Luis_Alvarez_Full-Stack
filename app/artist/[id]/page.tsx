@@ -11,6 +11,62 @@ import { useRouter } from "next/navigation";
 import Loader from "../../components/Loader";
 
 export default function ArtistProfile() {
+  // Estado para saber si los álbumes ya están guardados
+  const [albumsSaved, setAlbumsSaved] = useState(false);
+
+  // Guardar todos los álbumes del artista
+  const handleSaveAllAlbums = async () => {
+    if (!albums.length) return;
+    const token =
+      typeof window !== "undefined" &&
+      process.env.NEXT_PUBLIC_SPOTIFY_TOKEN &&
+      window.location.hostname === "localhost"
+        ? process.env.NEXT_PUBLIC_SPOTIFY_TOKEN
+        : localStorage.getItem("spotify_token");
+    if (!token) return;
+    try {
+      await fetch("https://api.spotify.com/v1/me/albums", {
+        method: "PUT",
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ ids: albums.map((a) => a.id) }),
+      });
+      setAlbumsSaved(true);
+      alert(
+        "Todos los álbumes del artista han sido guardados en tu biblioteca."
+      );
+    } catch (e) {
+      alert("Error al guardar los álbumes. Verifica tu sesión de Spotify.");
+    }
+  };
+
+  // Eliminar todos los álbumes del artista
+  const handleRemoveAllAlbums = async () => {
+    if (!albums.length) return;
+    const token =
+      typeof window !== "undefined" &&
+      process.env.NEXT_PUBLIC_SPOTIFY_TOKEN &&
+      window.location.hostname === "localhost"
+        ? process.env.NEXT_PUBLIC_SPOTIFY_TOKEN
+        : localStorage.getItem("spotify_token");
+    if (!token) return;
+    try {
+      await fetch("https://api.spotify.com/v1/me/albums", {
+        method: "DELETE",
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ ids: albums.map((a) => a.id) }),
+      });
+      setAlbumsSaved(false);
+      alert("Álbumes eliminados de tu biblioteca.");
+    } catch (e) {
+      alert("Error al eliminar los álbumes. Verifica tu sesión de Spotify.");
+    }
+  };
   // Hooks
   const { id } = useParams();
   const router = useRouter();
@@ -20,6 +76,44 @@ export default function ArtistProfile() {
   const [albums, setAlbums] = useState<Album[]>([]);
   const [loading, setLoading] = useState(true);
   const [currentPage, setCurrentPage] = useState(1);
+  
+  // Chequear si los álbumes del artista ya están guardados
+  useEffect(() => {
+    const checkAlbumsSaved = async () => {
+      if (!albums.length) return setAlbumsSaved(false);
+      const token =
+        typeof window !== "undefined" &&
+        process.env.NEXT_PUBLIC_SPOTIFY_TOKEN &&
+        window.location.hostname === "localhost"
+          ? process.env.NEXT_PUBLIC_SPOTIFY_TOKEN
+          : localStorage.getItem("spotify_token");
+      if (!token) return setAlbumsSaved(false);
+      try {
+        const ids = albums.map((a) => a.id).join(",");
+        const res = await fetch(
+          `https://api.spotify.com/v1/me/albums/contains?ids=${encodeURIComponent(
+            ids
+          )}`,
+          {
+            method: "GET",
+            headers: { Authorization: `Bearer ${token}` },
+          }
+        );
+        const data = await res.json();
+        // Si todos los álbumes están guardados, albumsSaved = true
+        if (Array.isArray(data)) {
+          setAlbumsSaved(data.every(Boolean));
+        } else {
+          setAlbumsSaved(false);
+        }
+      } catch {
+        setAlbumsSaved(false);
+      }
+    };
+    checkAlbumsSaved();
+  }, [albums]);
+
+  console.log(albums);
 
   // EFECTOS
 
@@ -153,8 +247,22 @@ export default function ArtistProfile() {
                     <p className={styles.publishedDate}>
                       Publicado: {album.release_date}
                     </p>
-                    {/* Aquí puedes agregar lógica para guardar/quitar álbum */}
-                    <button className={styles.addButton}>+ Add album</button>
+                    {albumsSaved ? (
+                      <button
+                        className={styles.addButton}
+                        style={{ backgroundColor: "#E3513D", color: "white" }}
+                        onClick={handleRemoveAllAlbums}
+                      >
+                        Remove album
+                      </button>
+                    ) : (
+                      <button
+                        className={styles.addButton}
+                        onClick={handleSaveAllAlbums}
+                      >
+                        + Add album
+                      </button>
+                    )}
                   </div>
                 </div>
               ))}
