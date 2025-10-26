@@ -3,18 +3,21 @@ import "../globals.css";
 import { useRouter, usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
 
-interface HeaderProps {
-  onLogout: () => void;
-}
-
-export default function Header({ onLogout }: HeaderProps) {
-
+export default function Header() {
   // Hooks
   const router = useRouter();
   const pathname = usePathname();
 
   // Estado local
   const [isMobile, setIsMobile] = useState(false);
+
+  // FUNCIONES
+
+  // Cerrar sesión
+  const handleLogout = () => {
+    localStorage.removeItem("spotify_token");
+    router.replace("/login");
+  };
 
   // EFECTOS
 
@@ -33,7 +36,7 @@ export default function Header({ onLogout }: HeaderProps) {
         <a
           href="#"
           className={
-            pathname === "/search" ? "navLink navLinkActive" : "navLink"
+            pathname === "/search" || pathname.startsWith("/artist") ? "navLink navLinkActive" : "navLink"
           }
           onClick={() => router.push("/search")}
         >
@@ -43,7 +46,7 @@ export default function Header({ onLogout }: HeaderProps) {
           Mis álbumes
         </a>
         <span className="separator">|</span>
-        <a href="#" className="navLink" onClick={onLogout}>
+        <a href="#" className="navLink" onClick={handleLogout}>
           {isMobile ? (
             <svg
               xmlns="http://www.w3.org/2000/svg"
