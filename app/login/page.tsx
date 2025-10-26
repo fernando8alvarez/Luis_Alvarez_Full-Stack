@@ -1,28 +1,22 @@
 "use client";
 import styles from "./page.module.css";
 import { useEffect, useState } from "react";
+const client_id = process.env.SPOTIFY_CLIENT_ID!;
+const redirect_uri = process.env.SPOTIFY_REDIRECT_URI!;
+const scopes = "user-read-email user-library-read user-library-modify";
 
 export default function Login() {
   // Estado local
   const [code, setCode] = useState<string | null>(null);
-
-  //   const isLocal =
-  //     typeof window !== "undefined" && window.location.hostname === "localhost";
-  //   const redirectUri = isLocal
-  //     ? "http://localhost:3000/login"
-  //     : "https://luis-alvarez-full-stack.vercel.app/login";
-
-  //   const handleLogin = () => {
-  //     window.location.href = `https://accounts.spotify.com/authorize?client_id=dad8def7087741a486c1873745f680fd&response_type=code&redirect_uri=${encodeURIComponent(
-  //       redirectUri
-  //     )}&scope=user-read-email%20user-library-read`;
-  //   };
+  const authUrl = `https://accounts.spotify.com/authorize?client_id=${client_id}&response_type=code&redirect_uri=${encodeURIComponent(
+    redirect_uri
+  )}&scope=${encodeURIComponent(scopes)}`;
 
   // FUNCIONES
 
   // Login con Spotify
   const handleLogin = () => {
-    window.location.href = `https://accounts.spotify.com/authorize?client_id=dad8def7087741a486c1873745f680fd&response_type=code&redirect_uri=https://luis-alvarez-full-stack.vercel.app/login&scope=user-read-email%20user-library-read%20user-library-modify`;
+    window.location.href = authUrl;
   };
 
   // EFECTOS
