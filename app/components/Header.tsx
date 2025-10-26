@@ -36,13 +36,21 @@ export default function Header() {
         <a
           href="#"
           className={
-            pathname === "/search" || pathname.startsWith("/artist") ? "navLink navLinkActive" : "navLink"
+            pathname === "/search" || pathname.startsWith("/artist")
+              ? "navLink navLinkActive"
+              : "navLink"
           }
           onClick={() => router.push("/search")}
         >
           Buscar
         </a>
-        <a href="#" className="navLink">
+        <a
+          href="#"
+          className={
+            pathname === "/myAlbums" ? "navLink navLinkActive" : "navLink"
+          }
+          onClick={() => router.push("/myAlbums")}
+        >
           Mis álbumes
         </a>
         <span className="separator">|</span>
