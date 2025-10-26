@@ -1,3 +1,43 @@
+.navLinkActive {
+  color: #d6f379 !important;
+  font-weight: bold;
+}
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 2rem 4rem;
+}
+
+.logo {
+  color: white;
+  font-size: 1.5rem;
+  font-weight: bold;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+}
+
+.nav {
+  display: flex;
+  align-items: center;
+  gap: 2rem;
+}
+
+.navLink {
+  color: #d1d5db;
+  text-decoration: none;
+  font-size: 0.95rem;
+  transition: color 0.2s;
+}
+
+.navLink:hover {
+  color: white;
+}
+
+.separator {
+  color: #6b7280;
+}
 @import "tailwindcss";
 
 :root {
@@ -23,4 +63,49 @@ body {
   background-color: #222222 !important;
   color: var(--foreground);
   font-family: Arial, Helvetica, sans-serif;
+}
+
+/* ========== TABLET (<=1024px) ========== */
+@media (max-width: 1024px) {
+  .header {
+    flex-direction: row;
+    gap: 0.5rem;
+    padding: 2rem 2rem;
+    align-items: center;
+    justify-content: space-between;
+  }
+  .nav {
+    gap: 1rem;
+  }
+  .logo {
+    font-size: 1.2rem;
+  }
+}
+
+/* ========== MOBILE (<=768px) ========== */
+@media (max-width: 768px) {
+  .header {
+    flex-direction: row;
+    gap: 0.5rem;
+    padding: 1rem 2rem;
+    padding-top: 1rem;
+    align-items: center;
+    justify-content: space-between;
+  }
+  .logo {
+    font-size: 1rem;
+    margin-bottom: 0;
+  }
+  .nav {
+    flex-direction: row;
+    gap: 1rem;
+    align-items: center;
+    justify-content: center;
+    width: auto;
+  }
+  .navLink {
+    display: flex;
+    align-items: center;
+    gap: 0.25rem;
+  }
 }

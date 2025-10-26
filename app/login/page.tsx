@@ -3,12 +3,8 @@ import styles from "./page.module.css";
 import { useEffect, useState } from "react";
 
 export default function Login() {
+  // Estado local
   const [code, setCode] = useState<string | null>(null);
-
-  useEffect(() => {
-    const params = new URLSearchParams(window.location.search);
-    setCode(params.get("code"));
-  }, []);
 
   //   const isLocal =
   //     typeof window !== "undefined" && window.location.hostname === "localhost";
@@ -22,23 +18,35 @@ export default function Login() {
   //     )}&scope=user-read-email%20user-library-read`;
   //   };
 
+  // FUNCIONES
+
+  // Login con Spotify
   const handleLogin = () => {
     window.location.href = `https://accounts.spotify.com/authorize?client_id=dad8def7087741a486c1873745f680fd&response_type=code&redirect_uri=https://luis-alvarez-full-stack.vercel.app/login&scope=user-read-email%20user-library-read`;
   };
 
+  // EFECTOS
+
+  // Manejar el callback de Spotify
   useEffect(() => {
-  if (code) {
-    fetch(`/api/auth/callback?code=${code}`)
-      .then((res) => res.json())
-      .then((data) => {
-        console.log("callback data", data); // <-- Agrega esto
-        if (data.access_token) {
-          localStorage.setItem("spotify_token", data.access_token);
-          window.location.replace("/search");
-        }
-      });
-  }
-}, [code]);
+    if (code) {
+      fetch(`/api/auth/callback?code=${code}`)
+        .then((res) => res.json())
+        .then((data) => {
+          console.log("callback data", data);
+          if (data.access_token) {
+            localStorage.setItem("spotify_token", data.access_token);
+            window.location.replace("/search");
+          }
+        });
+    }
+  }, [code]);
+
+  // Obtener el código de autorización de la URL
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    setCode(params.get("code"));
+  }, []);
 
   return (
     <div className={styles.container}>

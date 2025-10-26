@@ -1,10 +1,77 @@
 "use client";
-import { useEffect } from "react";
+
+import styles from "./page.module.css";
+import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
+import Pagination from "./components/Pagination";
+import Header from "../components/Header";
+
+interface SpotifyArtist {
+  id: string;
+  name: string;
+  images: { url: string }[];
+  followers: { total: number };
+}
 
 export default function Search() {
+  // Hooks
   const router = useRouter();
 
+  // Estado locales
+  const [query, setQuery] = useState("");
+  const [artists, setArtists] = useState<SpotifyArtist[]>([]);
+  const [loading, setLoading] = useState(false);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [isMobile, setIsMobile] = useState(false);
+
+  const pageSize = 4;
+  const totalPages = Math.ceil(artists.length / pageSize);
+  const paginatedArtists = artists.slice(
+    (currentPage - 1) * pageSize,
+    currentPage * pageSize
+  );
+
+  // FUNCIONES
+
+  // Cerrar sesión
+  const handleLogout = () => {
+    localStorage.removeItem("spotify_token");
+    router.replace("/login");
+  };
+
+  // Buscar artistas
+  const handleSearch = async () => {
+    const token =
+      typeof window !== "undefined" &&
+      process.env.NEXT_PUBLIC_SPOTIFY_TOKEN &&
+      window.location.hostname === "localhost"
+        ? process.env.NEXT_PUBLIC_SPOTIFY_TOKEN
+        : localStorage.getItem("spotify_token");
+    if (!token || !query) return;
+    setLoading(true);
+    try {
+      const res = await fetch(
+        `https://api.spotify.com/v1/search?type=artist&q=${encodeURIComponent(
+          query
+        )}`,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+      const data = await res.json();
+      setArtists(data.artists?.items || []);
+      setCurrentPage(1);
+    } catch (error) {
+      setArtists([]);
+    }
+    setLoading(false);
+  };
+
+  // EFECTOS
+
+  // Verificar token de Spotify al cargar la página
   useEffect(() => {
     const token = localStorage.getItem("spotify_token");
     if (!token) {
@@ -12,32 +79,111 @@ export default function Search() {
     }
   }, [router]);
 
-  const handleLogout = () => {
-    localStorage.removeItem("spotify_token");
-    router.replace("/login");
-  };
+  // Detectar si es dispositivo móvil
+  useEffect(() => {
+    const checkMobile = () => setIsMobile(window.innerWidth <= 767);
+    checkMobile();
+    window.addEventListener("resize", checkMobile);
+    return () => window.removeEventListener("resize", checkMobile);
+  }, []);
 
   return (
-    <div>
-      <nav
-        style={{
-          display: "flex",
-          justifyContent: "space-between",
-          alignItems: "center",
-          padding: "1rem",
-        }}
-      >
-        <span style={{ fontWeight: "bold" }}>V-Music</span>
-        <button onClick={handleLogout}>Cerrar sesión</button>
-      </nav>
-      <main style={{ padding: "2rem" }}>
-        <h1>Buscar música</h1>
-        <input
-          type="text"
-          placeholder="Buscar artista, canción o álbum..."
-          style={{ width: "100%", maxWidth: 400, padding: 8, fontSize: 16 }}
-        />
-        {/* Aquí irá la lógica de búsqueda e integración con Spotify */}
+    <div className={styles.container}>
+      <Header onLogout={handleLogout} />
+      <main className={styles.main}>
+        <div className={styles.hero}>
+          <h1 className={styles.title}>
+            Busca tus <span className={styles.highlight}>artistas</span>
+          </h1>
+          <p className={styles.subtitle}>
+            Encuentra tus artistas favoritos gracias a nuestro buscador y guarda
+            tus álbumes favoritos
+          </p>
+          <div className={styles.searchContainer}>
+            <input
+              type="text"
+              placeholder={
+                isMobile
+                  ? "Ingresa un artista"
+                  : "Ingresa el nombre de un artista"
+              }
+              className={styles.searchInput}
+              value={query}
+              onChange={(e) => setQuery(e.target.value)}
+              onKeyDown={(e) => {
+                if (e.key === "Enter") {
+                  handleSearch();
+                }
+              }}
+            />
+            <button
+              className={styles.searchButton}
+              onClick={handleSearch}
+              disabled={loading}
+            >
+              {loading ? (
+                isMobile ? (
+                  "..."
+                ) : (
+                  "Buscando..."
+                )
+              ) : isMobile ? (
+                <span className={styles.searchIconWrapper}>
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    width="20"
+                    height="20"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                    strokeWidth="2"
+                  >
+                    <circle cx="11" cy="11" r="7" />
+                    <line
+                      x1="18"
+                      y1="18"
+                      x2="15.5"
+                      y2="15.5"
+                      strokeLinecap="round"
+                    />
+                  </svg>
+                </span>
+              ) : (
+                "Buscar"
+              )}
+            </button>
+          </div>
+        </div>
+        <div className={styles.resultsSection}>
+          <p className={styles.resultsText}>
+            {artists.length > 0 &&
+              `Mostrando 4 resultados de ${artists.length}`}
+          </p>
+          <div className={styles.grid}>
+            {paginatedArtists.map((artist) => (
+              <div className={styles.card} key={artist.id}>
+                <div className={styles.cardImage}>
+                  <img
+                    src={artist.images[0]?.url || "/default-artist.png"}
+                    alt={artist.name}
+                  />
+                </div>
+                <h3 className={styles.cardTitle}>{artist.name}</h3>
+                <p className={styles.cardFollowers}>
+                  Followers: {artist.followers.total}
+                </p>
+                <button className={styles.addAlbumButton}>+ Add album</button>
+              </div>
+            ))}
+          </div>
+          <div className={styles.paginationLeft}>
+            <Pagination
+              currentPage={currentPage}
+              totalPages={totalPages}
+              onPageChange={setCurrentPage}
+            />
+          </div>
+        </div>
       </main>
     </div>
   );
