@@ -7,6 +7,7 @@ import Pagination from "../components/Pagination";
 import Header from "../components/Header";
 import type { SpotifyArtist } from "../types";
 import Loader from "../components/Loader";
+const API_URL = process.env.NEXT_PUBLIC_SPOTIFY_API_URL;
 
 export default function Search() {
   // Hooks
@@ -41,9 +42,7 @@ export default function Search() {
     setLoading(true);
     try {
       const res = await fetch(
-        `https://api.spotify.com/v1/search?type=artist&q=${encodeURIComponent(
-          query
-        )}`,
+        `${API_URL}/v1/search?type=artist&q=${encodeURIComponent(query)}`,
         {
           headers: {
             Authorization: `Bearer ${token}`,

@@ -4,8 +4,8 @@ import styles from "./page.module.css";
 import { useEffect, useState } from "react";
 import Header from "../components/Header";
 import Loader from "../components/Loader";
-import type { Album } from "../types";
 import Pagination from "../components/Pagination";
+const API_URL = process.env.SPOTIFY_API_URL;
 
 export default function MyAlbums() {
   const [albums, setAlbums] = useState<any[]>([]);
@@ -20,9 +20,35 @@ export default function MyAlbums() {
     currentPage * pageSize
   );
 
-  console.log(albums);
-  
+  // FUNCIONES
 
+  // Función para eliminar un álbum
+  const handleRemoveAlbum = async (albumId: string) => {
+    const token =
+      typeof window !== "undefined" &&
+      process.env.NEXT_PUBLIC_SPOTIFY_TOKEN &&
+      window.location.hostname === "localhost"
+        ? process.env.NEXT_PUBLIC_SPOTIFY_TOKEN
+        : localStorage.getItem("spotify_token");
+    if (!token) return;
+    try {
+      await fetch(`${API_URL}/me/albums`, {
+        method: "DELETE",
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ ids: [albumId] }),
+      });
+      setAlbums((prev: any[]) => prev.filter((a) => a.album.id !== albumId));
+    } catch (e) {
+      alert("Error al eliminar el álbum. Verifica tu sesión de Spotify.");
+    }
+  };
+
+  // EFECTOS
+
+  // Detectar si es dispositivo móvil
   useEffect(() => {
     const checkMobile = () => setIsMobile(window.innerWidth <= 767);
     checkMobile();
@@ -30,6 +56,7 @@ export default function MyAlbums() {
     return () => window.removeEventListener("resize", checkMobile);
   }, []);
 
+  // Obtener álbumes guardados
   useEffect(() => {
     const fetchAlbums = async () => {
       const token =
@@ -41,7 +68,7 @@ export default function MyAlbums() {
       if (!token) return;
       setLoading(true);
       try {
-        const res = await fetch("https://api.spotify.com/v1/me/albums", {
+        const res = await fetch(`${API_URL}/me/albums`, {
           headers: { Authorization: `Bearer ${token}` },
         });
         const data = await res.json();
@@ -92,6 +119,13 @@ export default function MyAlbums() {
                   <p className={styles.cardFollowers}>
                     Publicado: {item.album.release_date}
                   </p>
+                  <button
+                    className={styles.addButton}
+                    style={{ backgroundColor: "#E3513D", color: "white" }}
+                    onClick={() => handleRemoveAlbum(item.album.id)}
+                  >
+                    Remove album
+                  </button>
                 </div>
               ))}
             </div>
