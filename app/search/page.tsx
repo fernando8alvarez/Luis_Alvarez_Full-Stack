@@ -47,6 +47,8 @@ export default function Search() {
       window.location.hostname === "localhost"
         ? process.env.NEXT_PUBLIC_SPOTIFY_TOKEN
         : localStorage.getItem("spotify_token");
+        console.log(token);
+        
     if (!token || !query) return;
     setLoading(true);
     try {
@@ -74,9 +76,9 @@ export default function Search() {
   // Verificar token de Spotify al cargar la página
   useEffect(() => {
     const token = localStorage.getItem("spotify_token");
-    if (!token) {
-      router.replace("/login");
-    }
+    // if (!token) {
+    //   router.replace("/login");
+    // }
   }, [router]);
 
   // Detectar si es dispositivo móvil

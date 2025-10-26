@@ -125,7 +125,6 @@
   display: grid;
   grid-template-columns: repeat(4, 1fr);
   gap: 2rem;
-  margin-bottom: 3rem;
 }
 
 .card {
@@ -248,18 +247,17 @@
     padding-bottom: 1rem;
     border-radius: 12px;
   }
-  .resultsSection {
-    max-height: 50vh;
+  .grid {
+    max-height: 52vh;
     overflow-y: auto;
     -webkit-overflow-scrolling: touch;
-    padding-bottom: 1rem;
     margin-left: 0;
     margin-right: 0;
     width: 100%;
     box-sizing: border-box;
     scrollbar-width: none; /* Firefox */
   }
-  .resultsSection::-webkit-scrollbar {
+  .grid::-webkit-scrollbar {
     display: none; /* Chrome, Safari, Opera */
   }
   .resultsText {
@@ -268,20 +266,33 @@
   .hero {
     text-align: left;
     margin-top: 2rem;
+    margin-bottom: 2rem;
+    width: 100%;
+    max-width: 100%;
+    margin-left: 0;
+    padding-left: 1rem;
+    padding-right: 1rem;
+    box-sizing: border-box;
   }
   .title {
     text-align: left;
     font-size: 2.5rem;
+    width: 100%;
+    margin-left: 0;
+    padding: 0;
   }
   .subtitle {
-    font-size: 1rem;
+    font-size: 0.9rem;
     text-align: left;
     margin-bottom: 1rem;
+    width: 100%;
+    margin-left: 0;
+    padding: 0;
   }
   .grid {
     grid-template-columns: 1fr;
     row-gap: 1rem;
-    padding-left: 1.2rem;
+    padding-left: 1rem;
     padding-right: 1rem;
   }
   .searchContainer {
