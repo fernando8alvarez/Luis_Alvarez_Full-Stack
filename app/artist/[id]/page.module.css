@@ -1,0 +1,296 @@
+.container {
+  min-height: 100vh;
+  background-color: #2a2a2a;
+  color: white;
+  padding: 0 5rem 0 5rem;
+}
+
+.main {
+  padding: 0 4rem;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Artist Header */
+.header {
+  display: flex;
+  justify-content: space-between;
+}
+
+.profileData {
+  display: flex;
+  align-items: flex-start;
+  gap: 40px;
+}
+
+.profileImage {
+  flex-shrink: 0;
+}
+
+.arrow {
+  cursor: pointer;
+  margin-left: 16px;
+  width: 30px;
+  height: 30px;
+  transform: rotate(180deg);
+}
+
+.image {
+  width: 230px;
+  height: 230px;
+  border-radius: 50%;
+  object-fit: cover;
+}
+
+.artistInfo {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  padding-top: 20px;
+}
+
+.verifiedBadge {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 14px;
+  color: #e5e5e5;
+}
+
+.checkIcon {
+  width: 20px;
+  height: 20px;
+}
+
+.artistName {
+  font-size: 56px;
+  font-weight: 700;
+  margin: 0;
+  line-height: 1.1;
+}
+
+.stats {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  font-size: 14px;
+  color: #b3b3b3;
+}
+
+.stats p {
+  margin: 0;
+}
+
+.sectionTitle {
+  font-size: 18px;
+  font-weight: 400;
+  color: #e5e5e5;
+  margin: 20px 0 20px 0;
+}
+
+.albumsGrid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 1rem;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.albumCard {
+  border-radius: 16px;
+  padding: 1.5rem;
+  transition: transform 0.2s;
+  position: relative;
+  cursor: pointer;
+  background-color: transparent;
+  width: 100%;
+  max-width: 100%;
+  margin: 0;
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+}
+
+.albumCard:hover {
+  transform: translateY(-4px);
+  background-color: #d6f379;
+}
+
+.albumCard:hover .addButton {
+  background-color: #fff;
+  color: #1f2937;
+  border: 1.5px solid #d6f379;
+}
+
+.albumCard:active {
+  background-color: #d6f379;
+}
+
+.albumImageWrapper {
+  width: 100%;
+  aspect-ratio: 1;
+  border-radius: 12px;
+  overflow: hidden;
+  background-color: #374151;
+}
+
+.albumImage {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.albumInfo {
+  padding: 0 12px;
+}
+
+.albumName {
+  font-size: 1.5rem;
+  font-weight: 700;
+  margin-top: 0.5rem;
+  margin-bottom: 0.5rem;
+  color: white;
+}
+
+.publishedDate {
+  font-size: 1rem;
+  color: white;
+  margin-bottom: 1rem;
+}
+
+/* Color negro en hover para nombre y followers */
+.albumCard:hover .albumName,
+.albumCard:hover .publishedDate {
+  color: #1f2937;
+}
+
+/* Buttons */
+
+.addButton {
+  width: auto;
+  margin-top: 1.2rem;
+  padding: 0.75rem 1rem;
+  border-radius: 50px;
+  border: none;
+  background-color: #d6f379;
+  color: #1f2937;
+  font-weight: 600;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: background-color 0.2s;
+  display: block;
+}
+
+.addButton:hover {
+  background-color: #b5c94a;
+}
+
+/* ========== TABLET (<=1024px) ========== */
+@media (max-width: 1024px) {
+  .albumsGrid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 2rem;
+    padding-left: 0;
+    padding-right: 0;
+    width: 100%;
+    box-sizing: border-box;
+  }
+  .main {
+    padding: 0;
+  }
+  .albumCard {
+    width: 100%;
+    max-width: 100%;
+    margin: 0;
+    box-sizing: border-box;
+    padding: 1rem 1.2rem;
+    border-radius: 28px;
+    min-height: 400px;
+    font-size: 1.25rem;
+  }
+}
+
+@media (max-width: 900px) {
+  .container {
+    padding: 40px 40px;
+  }
+
+  .artistName {
+    font-size: 42px;
+  }
+}
+
+/* ========== MOBILE (<=768px) ========== */
+@media (max-width: 768px) {
+  .profileData {
+    flex-direction: column;
+    align-items: flex-start;
+    text-align: left;
+    gap: 16px;
+    width: 100%;
+    margin-bottom: 2rem;
+    padding-left: 1rem;
+    padding-right: 1rem;
+    box-sizing: border-box;
+  }
+  .artistInfo {
+    align-items: flex-start;
+    text-align: left;
+    width: 100%;
+    padding-top: 0.5rem;
+  }
+  .artistName {
+    font-size: 2.2rem;
+    text-align: left;
+    margin-left: 0;
+    padding: 0;
+  }
+  .albumsGrid {
+    grid-template-columns: 1fr;
+    row-gap: 1rem;
+    padding-left: 2rem;
+    padding-right: 2rem;
+    width: 100%;
+    box-sizing: border-box;
+  }
+  .albumCard {
+    width: 100%;
+    max-width: 100%;
+    margin: 0;
+    box-sizing: border-box;
+    padding-left: 0.5rem;
+    padding-right: 0.5rem;
+    padding-top: 1rem;
+    padding-bottom: 1rem;
+    border-radius: 12px;
+  }
+  /* Desactivar fondo verde en hover y focus de card en mobile */
+  .albumCard:hover,
+  .albumCard:focus,
+  .albumCard:active {
+    background-color: transparent;
+    color: white;
+    box-shadow: none;
+  }
+  .albumCard:hover .albumName,
+  .albumCard:hover .publishedDate {
+    background-color: transparent;
+    color: white;
+  }
+  .container {
+    padding: 0 0 0 0;
+  }
+  .main {
+    padding: 0 2rem 0 2rem;
+  }
+  .sectionTitle {
+    font-size: 13px;
+  }
+  .arrow {
+    cursor: pointer;
+    margin-left: 16px;
+    width: 20px;
+    height: 20px;
+    transform: rotate(180deg);
+  }
+}

@@ -3,15 +3,10 @@
 import styles from "./page.module.css";
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import Pagination from "./components/Pagination";
+import Pagination from "../components/Pagination";
 import Header from "../components/Header";
-
-interface SpotifyArtist {
-  id: string;
-  name: string;
-  images: { url: string }[];
-  followers: { total: number };
-}
+import type { SpotifyArtist } from "../types";
+import Loader from "../components/Loader";
 
 export default function Search() {
   // Hooks
@@ -33,12 +28,6 @@ export default function Search() {
 
   // FUNCIONES
 
-  // Cerrar sesión
-  const handleLogout = () => {
-    localStorage.removeItem("spotify_token");
-    router.replace("/login");
-  };
-
   // Buscar artistas
   const handleSearch = async () => {
     const token =
@@ -47,6 +36,7 @@ export default function Search() {
       window.location.hostname === "localhost"
         ? process.env.NEXT_PUBLIC_SPOTIFY_TOKEN
         : localStorage.getItem("spotify_token");
+
     if (!token || !query) return;
     setLoading(true);
     try {
@@ -74,9 +64,9 @@ export default function Search() {
   // Verificar token de Spotify al cargar la página
   useEffect(() => {
     const token = localStorage.getItem("spotify_token");
-    if (!token) {
-      router.replace("/login");
-    }
+    // if (!token) {
+    //   router.replace("/login");
+    // }
   }, [router]);
 
   // Detectar si es dispositivo móvil
@@ -89,7 +79,7 @@ export default function Search() {
 
   return (
     <div className={styles.container}>
-      <Header onLogout={handleLogout} />
+      <Header />
       <main className={styles.main}>
         <div className={styles.hero}>
           <h1 className={styles.title}>
@@ -154,36 +144,50 @@ export default function Search() {
             </button>
           </div>
         </div>
-        <div className={styles.resultsSection}>
-          <p className={styles.resultsText}>
-            {artists.length > 0 &&
-              `Mostrando 4 resultados de ${artists.length}`}
-          </p>
-          <div className={styles.grid}>
-            {paginatedArtists.map((artist) => (
-              <div className={styles.card} key={artist.id}>
-                <div className={styles.cardImage}>
-                  <img
-                    src={artist.images[0]?.url || "/default-artist.png"}
-                    alt={artist.name}
-                  />
+        {loading ? (
+          <Loader />
+        ) : (
+          <div className={styles.resultsSection}>
+            <p className={styles.resultsText}>
+              {artists.length > 0 &&
+                `Mostrando 4 resultados de ${artists.length}`}
+            </p>
+            <div className={styles.grid}>
+              {paginatedArtists.map((artist) => (
+                <div
+                  className={styles.card}
+                  key={artist.id}
+                  onClick={() => router.push(`/artist/${artist.id}`)}
+                  style={{ cursor: "pointer" }}
+                >
+                  <div className={styles.cardImage}>
+                    <img
+                      src={artist.images[0]?.url || "/default-artist.png"}
+                      alt={artist.name}
+                    />
+                  </div>
+                  <h3 className={styles.cardTitle}>{artist.name}</h3>
+                  <p className={styles.cardFollowers}>
+                    Followers: {artist.followers.total}
+                  </p>
+                  <button
+                    className={styles.addAlbumButton}
+                    onClick={(e) => e.stopPropagation()}
+                  >
+                    + Add album
+                  </button>
                 </div>
-                <h3 className={styles.cardTitle}>{artist.name}</h3>
-                <p className={styles.cardFollowers}>
-                  Followers: {artist.followers.total}
-                </p>
-                <button className={styles.addAlbumButton}>+ Add album</button>
-              </div>
-            ))}
+              ))}
+            </div>
+            <div className={styles.paginationLeft}>
+              <Pagination
+                currentPage={currentPage}
+                totalPages={totalPages}
+                onPageChange={setCurrentPage}
+              />
+            </div>
           </div>
-          <div className={styles.paginationLeft}>
-            <Pagination
-              currentPage={currentPage}
-              totalPages={totalPages}
-              onPageChange={setCurrentPage}
-            />
-          </div>
-        </div>
+        )}
       </main>
     </div>
   );
