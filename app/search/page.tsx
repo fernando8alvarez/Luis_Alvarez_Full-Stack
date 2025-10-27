@@ -37,7 +37,7 @@ export default function Search() {
     setLoading(true);
     try {
       const res = await fetch(
-        `${API_URL}/v1/search?type=artist&q=${encodeURIComponent(query)}`,
+        `${API_URL}/search?type=artist&q=${encodeURIComponent(query)}`,
         {
           headers: {
             Authorization: `Bearer ${token}`,

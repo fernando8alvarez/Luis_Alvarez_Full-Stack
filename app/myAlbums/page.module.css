@@ -103,6 +103,25 @@
   margin: 1rem 0;
 }
 
+.addButton {
+  width: auto;
+  margin-top: 1.2rem;
+  padding: 0.75rem 1rem;
+  border-radius: 50px;
+  border: none;
+  background-color: #d6f379;
+  color: #1f2937;
+  font-weight: 600;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: background-color 0.2s;
+  display: block;
+}
+
+.addButton:hover {
+  background-color: #b5c94a;
+}
+/* ========== TABLET (<=1024px) ========== */
 @media (max-width: 1024px) {
   .grid {
     grid-template-columns: repeat(2, 1fr);
@@ -142,6 +161,7 @@
   }
 }
 
+/* ========== MOBILE (<=768px) ========== */
 @media (max-width: 768px) {
   .paginationLeft {
     justify-content: center;

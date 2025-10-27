@@ -11,7 +11,6 @@
   flex-direction: column;
 }
 
-/* Artist Header */
 .header {
   display: flex;
   justify-content: space-between;
@@ -158,13 +157,10 @@
   margin-bottom: 1rem;
 }
 
-/* Color negro en hover para nombre y followers */
 .albumCard:hover .albumName,
 .albumCard:hover .publishedDate {
   color: #1f2937;
 }
-
-/* Buttons */
 
 .addButton {
   width: auto;
@@ -264,7 +260,7 @@
     padding-bottom: 1rem;
     border-radius: 12px;
   }
-  /* Desactivar fondo verde en hover y focus de card en mobile */
+
   .albumCard:hover,
   .albumCard:focus,
   .albumCard:active {
