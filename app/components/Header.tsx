@@ -16,11 +16,10 @@ export default function Header() {
   // Cerrar sesión global de Spotify y local
   const handleLogout = () => {
     localStorage.removeItem("spotify_token");
-    // Redirige a logout de Spotify y luego a /login
-    window.location.href = "https://accounts.spotify.com/logout";
-    setTimeout(() => {
-      router.replace("/login");
-    }, 1500);
+    // Abrir logout de Spotify en una nueva pestaña
+    window.open("https://accounts.spotify.com/logout", "_blank");
+    // Redirigir a login de la app inmediatamente
+    router.replace("/login");
   };
 
   // EFECTOS
