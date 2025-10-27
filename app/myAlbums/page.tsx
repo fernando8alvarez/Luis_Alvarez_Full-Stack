@@ -39,7 +39,15 @@ export default function MyAlbums() {
         },
         body: JSON.stringify({ ids: [albumId] }),
       });
-      setAlbums((prev: any[]) => prev.filter((a) => a.album.id !== albumId));
+      setAlbums((prev: any[]) => {
+        const newAlbums = prev.filter((a) => a.album.id !== albumId);
+        // Si la página actual queda vacía y no es la primera, retroceder una página
+        const newTotalPages = Math.ceil(newAlbums.length / pageSize);
+        if (newTotalPages < currentPage && currentPage > 1) {
+          setCurrentPage(currentPage - 1);
+        }
+        return newAlbums;
+      });
     } catch (e) {
       alert("Error al eliminar el álbum. Verifica tu sesión de Spotify.");
     }
