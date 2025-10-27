@@ -5,7 +5,7 @@ import { useEffect, useState } from "react";
 import Header from "../components/Header";
 import Loader from "../components/Loader";
 import Pagination from "../components/Pagination";
-const API_URL = process.env.SPOTIFY_API_URL;
+const API_URL = process.env.NEXT_PUBLIC_SPOTIFY_API_URL;
 
 export default function MyAlbums() {
   const [albums, setAlbums] = useState<any[]>([]);
@@ -24,12 +24,7 @@ export default function MyAlbums() {
 
   // Función para eliminar un álbum
   const handleRemoveAlbum = async (albumId: string) => {
-    const token =
-      typeof window !== "undefined" &&
-      process.env.NEXT_PUBLIC_SPOTIFY_TOKEN &&
-      window.location.hostname === "localhost"
-        ? process.env.NEXT_PUBLIC_SPOTIFY_TOKEN
-        : localStorage.getItem("spotify_token");
+    const token = localStorage.getItem("spotify_token");
     if (!token) return;
     try {
       await fetch(`${API_URL}/me/albums`, {
@@ -59,12 +54,7 @@ export default function MyAlbums() {
   // Obtener álbumes guardados
   useEffect(() => {
     const fetchAlbums = async () => {
-      const token =
-        typeof window !== "undefined" &&
-        process.env.NEXT_PUBLIC_SPOTIFY_TOKEN &&
-        window.location.hostname === "localhost"
-          ? process.env.NEXT_PUBLIC_SPOTIFY_TOKEN
-          : localStorage.getItem("spotify_token");
+      const token = localStorage.getItem("spotify_token");
       if (!token) return;
       setLoading(true);
       try {

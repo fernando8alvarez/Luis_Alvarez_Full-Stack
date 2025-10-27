@@ -1,8 +1,8 @@
 "use client";
 import styles from "./page.module.css";
 import { useEffect, useState } from "react";
-const client_id = process.env.SPOTIFY_CLIENT_ID!;
-const redirect_uri = process.env.SPOTIFY_REDIRECT_URI!;
+const client_id = process.env.NEXT_PUBLIC_SPOTIFY_CLIENT_ID!;
+const redirect_uri = process.env.NEXT_PUBLIC_SPOTIFY_REDIRECT_URI!;
 const scopes = "user-read-email user-library-read user-library-modify";
 
 export default function Login() {

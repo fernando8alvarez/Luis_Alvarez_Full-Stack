@@ -31,12 +31,7 @@ export default function Search() {
 
   // Buscar artistas
   const handleSearch = async () => {
-    const token =
-      typeof window !== "undefined" &&
-      process.env.NEXT_PUBLIC_SPOTIFY_TOKEN &&
-      window.location.hostname === "localhost"
-        ? process.env.NEXT_PUBLIC_SPOTIFY_TOKEN
-        : localStorage.getItem("spotify_token");
+    const token = localStorage.getItem("spotify_token");
 
     if (!token || !query) return;
     setLoading(true);
