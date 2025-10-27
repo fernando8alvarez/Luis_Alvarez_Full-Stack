@@ -58,9 +58,9 @@ export default function Search() {
   // Verificar token de Spotify al cargar la página
   useEffect(() => {
     const token = localStorage.getItem("spotify_token");
-    // if (!token) {
-    //   router.replace("/login");
-    // }
+    if (!token) {
+      router.replace("/login");
+    }
   }, [router]);
 
   // Detectar si es dispositivo móvil
