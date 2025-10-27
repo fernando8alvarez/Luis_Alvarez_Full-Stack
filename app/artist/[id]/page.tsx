@@ -9,7 +9,7 @@ import Header from "../../components/Header";
 import Pagination from "../../components/Pagination";
 import { useRouter } from "next/navigation";
 import Loader from "../../components/Loader";
-const API_URL = process.env.SPOTIFY_API_URL;
+const API_URL = process.env.NEXT_PUBLIC_SPOTIFY_API_URL;
 
 export default function ArtistProfile() {
   // Hooks
@@ -38,17 +38,14 @@ export default function ArtistProfile() {
     const fetchArtist = async () => {
       setLoading(true);
       try {
-        const resArtist = await fetch(
-          `https://api.spotify.com/v1/artists/${id}`,
-          {
-            headers: { Authorization: `Bearer ${token}` },
-          }
-        );
+        const resArtist = await fetch(`${API_URL}/artists/${id}`, {
+          headers: { Authorization: `Bearer ${token}` },
+        });
         const artistData = await resArtist.json();
         setArtist(artistData);
 
         const resAlbums = await fetch(
-          `https://api.spotify.com/v1/artists/${id}/albums?limit=12&page=${currentPage}`,
+          `${API_URL}/artists/${id}/albums?limit=12&page=${currentPage}`,
           {
             headers: { Authorization: `Bearer ${token}` },
           }
@@ -69,19 +66,12 @@ export default function ArtistProfile() {
   useEffect(() => {
     const checkAlbumsSaved = async () => {
       if (!albums.length) return setAlbumsSaved(false);
-      const token =
-        typeof window !== "undefined" &&
-        process.env.NEXT_PUBLIC_SPOTIFY_TOKEN &&
-        window.location.hostname === "localhost"
-          ? process.env.NEXT_PUBLIC_SPOTIFY_TOKEN
-          : localStorage.getItem("spotify_token");
+      const token = localStorage.getItem("spotify_token");
       if (!token) return setAlbumsSaved(false);
       try {
         const ids = albums.map((a) => a.id).join(",");
         const res = await fetch(
-          `https://api.spotify.com/v1/me/albums/contains?ids=${encodeURIComponent(
-            ids
-          )}`,
+          `${API_URL}/me/albums/contains?ids=${encodeURIComponent(ids)}`,
           {
             method: "GET",
             headers: { Authorization: `Bearer ${token}` },
@@ -103,15 +93,10 @@ export default function ArtistProfile() {
 
   // Guardar un solo álbum
   const handleSaveAlbum = async (albumId: string) => {
-    const token =
-      typeof window !== "undefined" &&
-      process.env.NEXT_PUBLIC_SPOTIFY_TOKEN &&
-      window.location.hostname === "localhost"
-        ? process.env.NEXT_PUBLIC_SPOTIFY_TOKEN
-        : localStorage.getItem("spotify_token");
+    const token = localStorage.getItem("spotify_token");
     if (!token) return;
     try {
-      await fetch("https://api.spotify.com/v1/me/albums", {
+      await fetch(`${API_URL}/me/albums`, {
         method: "PUT",
         headers: {
           Authorization: `Bearer ${token}`,
@@ -127,12 +112,7 @@ export default function ArtistProfile() {
 
   // Eliminar un solo álbum
   const handleRemoveAlbum = async (albumId: string) => {
-    const token =
-      typeof window !== "undefined" &&
-      process.env.NEXT_PUBLIC_SPOTIFY_TOKEN &&
-      window.location.hostname === "localhost"
-        ? process.env.NEXT_PUBLIC_SPOTIFY_TOKEN
-        : localStorage.getItem("spotify_token");
+    const token = localStorage.getItem("spotify_token");
     if (!token) return;
     try {
       await fetch(`${API_URL}/me/albums`, {
