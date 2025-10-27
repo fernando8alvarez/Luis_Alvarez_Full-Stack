@@ -1,6 +1,7 @@
 "use client";
 import styles from "./page.module.css";
 import { useEffect, useState } from "react";
+import Loader from "../components/Loader";
 const client_id = process.env.NEXT_PUBLIC_SPOTIFY_CLIENT_ID!;
 const redirect_uri = process.env.NEXT_PUBLIC_SPOTIFY_REDIRECT_URI!;
 const scopes = "user-read-email user-library-read user-library-modify";
@@ -8,6 +9,7 @@ const scopes = "user-read-email user-library-read user-library-modify";
 export default function Login() {
   // Estado local
   const [code, setCode] = useState<string | null>(null);
+  const [loading, setLoading] = useState(false);
   const authUrl = `https://accounts.spotify.com/authorize?client_id=${client_id}&response_type=code&redirect_uri=${encodeURIComponent(
     redirect_uri
   )}&scope=${encodeURIComponent(scopes)}`;
@@ -16,6 +18,7 @@ export default function Login() {
 
   // Login con Spotify
   const handleLogin = () => {
+    setLoading(true);
     window.location.href = authUrl;
   };
 
@@ -24,15 +27,18 @@ export default function Login() {
   // Manejar el callback de Spotify
   useEffect(() => {
     if (code) {
+      setLoading(true);
       fetch(`/api/auth/callback?code=${code}`)
         .then((res) => res.json())
         .then((data) => {
           if (data.access_token) {
-            console.log(data.access_token);
             localStorage.setItem("spotify_token", data.access_token);
             window.location.replace("/search");
+          } else {
+            setLoading(false);
           }
-        });
+        })
+        .catch(() => setLoading(false));
     }
   }, [code]);
 
@@ -47,6 +53,7 @@ export default function Login() {
     if (typeof window !== "undefined") {
       const token = localStorage.getItem("spotify_token");
       if (token) {
+        setLoading(true);
         window.location.replace("/search");
       }
     }
@@ -54,6 +61,24 @@ export default function Login() {
 
   return (
     <div className={styles.container}>
+      {loading && (
+        <div
+          style={{
+            position: "fixed",
+            top: 0,
+            left: 0,
+            width: "100vw",
+            height: "100vh",
+            background: "rgba(0,0,0,0.5)",
+            zIndex: 9999,
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+          }}
+        >
+          <Loader />
+        </div>
+      )}
       <header className={styles.header}>
         <h1 className={styles.logo}>V-Music</h1>
       </header>
