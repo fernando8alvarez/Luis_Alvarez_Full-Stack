@@ -13,10 +13,14 @@ export default function Header() {
 
   // FUNCIONES
 
-  // Cerrar sesión
+  // Cerrar sesión global de Spotify y local
   const handleLogout = () => {
     localStorage.removeItem("spotify_token");
-    router.replace("/login");
+    // Redirige a logout de Spotify y luego a /login
+    window.location.href = "https://accounts.spotify.com/logout";
+    setTimeout(() => {
+      router.replace("/login");
+    }, 1500);
   };
 
   // EFECTOS
