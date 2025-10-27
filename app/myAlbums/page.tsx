@@ -2,12 +2,16 @@
 
 import styles from "./page.module.css";
 import { useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
 import Header from "../components/Header";
 import Loader from "../components/Loader";
 import Pagination from "../components/Pagination";
 const API_URL = process.env.NEXT_PUBLIC_SPOTIFY_API_URL;
 
 export default function MyAlbums() {
+  // Hooks
+  const router = useRouter();
+
   const [albums, setAlbums] = useState<any[]>([]);
   const [loading, setLoading] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
@@ -71,6 +75,14 @@ export default function MyAlbums() {
     };
     fetchAlbums();
   }, []);
+
+  // Verificar token de Spotify al cargar la página
+  useEffect(() => {
+    const token = localStorage.getItem("spotify_token");
+    if (!token) {
+      router.replace("/login");
+    }
+  }, [router]);
 
   return (
     <div className={styles.container}>

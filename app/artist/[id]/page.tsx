@@ -26,6 +26,60 @@ export default function ArtistProfile() {
   const [modalMsg, setModalMsg] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
 
+  // FUNCIONES
+
+  // Guardar un solo álbum
+  const handleSaveAlbum = async (albumId: string, idx: number) => {
+    const token = localStorage.getItem("spotify_token");
+    if (!token) return;
+    try {
+      await fetch(`${API_URL}/me/albums`, {
+        method: "PUT",
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ ids: [albumId] }),
+      });
+      setAlbumsSaved((prev) => {
+        const updated = [...prev];
+        updated[idx] = true;
+        return updated;
+      });
+      setModalMsg("Álbum guardado en tu biblioteca.");
+      setModalOpen(true);
+    } catch (e) {
+      setModalMsg("Error al guardar el álbum. Verifica tu sesión de Spotify.");
+      setModalOpen(true);
+    }
+  };
+
+  // Eliminar un solo álbum
+  const handleRemoveAlbum = async (albumId: string, idx: number) => {
+    const token = localStorage.getItem("spotify_token");
+    if (!token) return;
+    try {
+      await fetch(`${API_URL}/me/albums`, {
+        method: "DELETE",
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ ids: [albumId] }),
+      });
+      setAlbumsSaved((prev) => {
+        const updated = [...prev];
+        updated[idx] = false;
+        return updated;
+      });
+      setModalMsg("Álbum eliminado de tu biblioteca.");
+      setModalOpen(true);
+    } catch (e) {
+      setModalMsg("Error al eliminar el álbum. Verifica tu sesión de Spotify.");
+      setModalOpen(true);
+    }
+  };
+
   // EFECTOS
 
   // Obtener datos del artista y sus álbumes
@@ -93,57 +147,13 @@ export default function ArtistProfile() {
     checkAlbumsSaved();
   }, [albums]);
 
-  // Guardar un solo álbum
-  const handleSaveAlbum = async (albumId: string, idx: number) => {
+  // Verificar token de Spotify al cargar la página
+  useEffect(() => {
     const token = localStorage.getItem("spotify_token");
-    if (!token) return;
-    try {
-      await fetch(`${API_URL}/me/albums`, {
-        method: "PUT",
-        headers: {
-          Authorization: `Bearer ${token}`,
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ ids: [albumId] }),
-      });
-      setAlbumsSaved((prev) => {
-        const updated = [...prev];
-        updated[idx] = true;
-        return updated;
-      });
-      setModalMsg("Álbum guardado en tu biblioteca.");
-      setModalOpen(true);
-    } catch (e) {
-      setModalMsg("Error al guardar el álbum. Verifica tu sesión de Spotify.");
-      setModalOpen(true);
+    if (!token) {
+      router.replace("/login");
     }
-  };
-
-  // Eliminar un solo álbum
-  const handleRemoveAlbum = async (albumId: string, idx: number) => {
-    const token = localStorage.getItem("spotify_token");
-    if (!token) return;
-    try {
-      await fetch(`${API_URL}/me/albums`, {
-        method: "DELETE",
-        headers: {
-          Authorization: `Bearer ${token}`,
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ ids: [albumId] }),
-      });
-      setAlbumsSaved((prev) => {
-        const updated = [...prev];
-        updated[idx] = false;
-        return updated;
-      });
-      setModalMsg("Álbum eliminado de tu biblioteca.");
-      setModalOpen(true);
-    } catch (e) {
-      setModalMsg("Error al eliminar el álbum. Verifica tu sesión de Spotify.");
-      setModalOpen(true);
-    }
-  };
+  }, [router]);
 
   // Logica de paginación
   const pageSize = 4;
