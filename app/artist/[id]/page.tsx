@@ -9,6 +9,7 @@ import Header from "../../components/Header";
 import Pagination from "../../components/Pagination";
 import { useRouter } from "next/navigation";
 import Loader from "../../components/Loader";
+import Modal from "../../components/Modal";
 const API_URL = process.env.NEXT_PUBLIC_SPOTIFY_API_URL;
 
 export default function ArtistProfile() {
@@ -20,7 +21,9 @@ export default function ArtistProfile() {
   const [artist, setArtist] = useState<SpotifyArtist | null>(null);
   const [albums, setAlbums] = useState<Album[]>([]);
   const [loading, setLoading] = useState(true);
-  const [albumsSaved, setAlbumsSaved] = useState(false);
+  const [albumsSaved, setAlbumsSaved] = useState<boolean[]>([]);
+  const [modalOpen, setModalOpen] = useState(false);
+  const [modalMsg, setModalMsg] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
 
   // EFECTOS
@@ -65,9 +68,9 @@ export default function ArtistProfile() {
   // Chequear si los álbumes del artista ya están guardados
   useEffect(() => {
     const checkAlbumsSaved = async () => {
-      if (!albums.length) return setAlbumsSaved(false);
+      if (!albums.length) return setAlbumsSaved([]);
       const token = localStorage.getItem("spotify_token");
-      if (!token) return setAlbumsSaved(false);
+      if (!token) return setAlbumsSaved([]);
       try {
         const ids = albums.map((a) => a.id).join(",");
         const res = await fetch(
@@ -78,21 +81,20 @@ export default function ArtistProfile() {
           }
         );
         const data = await res.json();
-        // Si todos los álbumes están guardados, albumsSaved = true
         if (Array.isArray(data)) {
-          setAlbumsSaved(data.every(Boolean));
+          setAlbumsSaved(data);
         } else {
-          setAlbumsSaved(false);
+          setAlbumsSaved([]);
         }
       } catch {
-        setAlbumsSaved(false);
+        setAlbumsSaved([]);
       }
     };
     checkAlbumsSaved();
   }, [albums]);
 
   // Guardar un solo álbum
-  const handleSaveAlbum = async (albumId: string) => {
+  const handleSaveAlbum = async (albumId: string, idx: number) => {
     const token = localStorage.getItem("spotify_token");
     if (!token) return;
     try {
@@ -104,14 +106,21 @@ export default function ArtistProfile() {
         },
         body: JSON.stringify({ ids: [albumId] }),
       });
-      alert("Álbum guardado en tu biblioteca.");
+      setAlbumsSaved((prev) => {
+        const updated = [...prev];
+        updated[idx] = true;
+        return updated;
+      });
+      setModalMsg("Álbum guardado en tu biblioteca.");
+      setModalOpen(true);
     } catch (e) {
-      alert("Error al guardar el álbum. Verifica tu sesión de Spotify.");
+      setModalMsg("Error al guardar el álbum. Verifica tu sesión de Spotify.");
+      setModalOpen(true);
     }
   };
 
   // Eliminar un solo álbum
-  const handleRemoveAlbum = async (albumId: string) => {
+  const handleRemoveAlbum = async (albumId: string, idx: number) => {
     const token = localStorage.getItem("spotify_token");
     if (!token) return;
     try {
@@ -123,9 +132,16 @@ export default function ArtistProfile() {
         },
         body: JSON.stringify({ ids: [albumId] }),
       });
-      alert("Álbum eliminado de tu biblioteca.");
+      setAlbumsSaved((prev) => {
+        const updated = [...prev];
+        updated[idx] = false;
+        return updated;
+      });
+      setModalMsg("Álbum eliminado de tu biblioteca.");
+      setModalOpen(true);
     } catch (e) {
-      alert("Error al eliminar el álbum. Verifica tu sesión de Spotify.");
+      setModalMsg("Error al eliminar el álbum. Verifica tu sesión de Spotify.");
+      setModalOpen(true);
     }
   };
 
@@ -140,6 +156,11 @@ export default function ArtistProfile() {
   return (
     <div className={styles.container}>
       <Header />
+      <Modal
+        open={modalOpen}
+        onClose={() => setModalOpen(false)}
+        message={modalMsg}
+      />
       {loading ? (
         <Loader />
       ) : !artist ? (
@@ -202,7 +223,7 @@ export default function ArtistProfile() {
               Guarda tus álbumes favoritos de {artist.name}
             </h2>
             <div className={styles.albumsGrid}>
-              {paginatedAlbums.map((album) => (
+              {paginatedAlbums.map((album, idx) => (
                 <div key={album.id} className={styles.albumCard}>
                   <div className={styles.albumImageWrapper}>
                     <Image
@@ -219,18 +240,18 @@ export default function ArtistProfile() {
                     <p className={styles.publishedDate}>
                       Publicado: {album.release_date}
                     </p>
-                    {albumsSaved ? (
+                    {albumsSaved[idx] ? (
                       <button
                         className={styles.addButton}
                         style={{ backgroundColor: "#E3513D", color: "white" }}
-                        onClick={() => handleRemoveAlbum(album.id)}
+                        onClick={() => handleRemoveAlbum(album.id, idx)}
                       >
                         Remove album
                       </button>
                     ) : (
                       <button
                         className={styles.addButton}
-                        onClick={() => handleSaveAlbum(album.id)}
+                        onClick={() => handleSaveAlbum(album.id, idx)}
                       >
                         + Add album
                       </button>
