@@ -21,7 +21,7 @@ export default function ArtistProfile() {
   const [artist, setArtist] = useState<SpotifyArtist | null>(null);
   const [albums, setAlbums] = useState<Album[]>([]);
   const [loading, setLoading] = useState(true);
-  const [albumsSaved, setAlbumsSaved] = useState<boolean[]>([]);
+  const [albumsSaved, setAlbumsSaved] = useState<Set<string>>(new Set());
   const [modalOpen, setModalOpen] = useState(false);
   const [modalMsg, setModalMsg] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
@@ -29,7 +29,7 @@ export default function ArtistProfile() {
   // FUNCIONES
 
   // Guardar un solo álbum
-  const handleSaveAlbum = async (albumId: string, idx: number) => {
+  const handleSaveAlbum = async (albumId: string) => {
     const token = localStorage.getItem("spotify_token");
     if (!token) return;
     try {
@@ -42,8 +42,8 @@ export default function ArtistProfile() {
         body: JSON.stringify({ ids: [albumId] }),
       });
       setAlbumsSaved((prev) => {
-        const updated = [...prev];
-        updated[idx] = true;
+        const updated = new Set(prev);
+        updated.add(albumId);
         return updated;
       });
       setModalMsg("Álbum guardado en tu biblioteca.");
@@ -55,7 +55,7 @@ export default function ArtistProfile() {
   };
 
   // Eliminar un solo álbum
-  const handleRemoveAlbum = async (albumId: string, idx: number) => {
+  const handleRemoveAlbum = async (albumId: string) => {
     const token = localStorage.getItem("spotify_token");
     if (!token) return;
     try {
@@ -68,8 +68,8 @@ export default function ArtistProfile() {
         body: JSON.stringify({ ids: [albumId] }),
       });
       setAlbumsSaved((prev) => {
-        const updated = [...prev];
-        updated[idx] = false;
+        const updated = new Set(prev);
+        updated.delete(albumId);
         return updated;
       });
       setModalMsg("Álbum eliminado de tu biblioteca.");
@@ -122,9 +122,9 @@ export default function ArtistProfile() {
   // Chequear si los álbumes del artista ya están guardados
   useEffect(() => {
     const checkAlbumsSaved = async () => {
-      if (!albums.length) return setAlbumsSaved([]);
+      if (!albums.length) return setAlbumsSaved(new Set());
       const token = localStorage.getItem("spotify_token");
-      if (!token) return setAlbumsSaved([]);
+      if (!token) return setAlbumsSaved(new Set());
       try {
         const ids = albums.map((a) => a.id).join(",");
         const res = await fetch(
@@ -136,12 +136,16 @@ export default function ArtistProfile() {
         );
         const data = await res.json();
         if (Array.isArray(data)) {
-          setAlbumsSaved(data);
+          const savedSet = new Set<string>();
+          data.forEach((isSaved: boolean, idx: number) => {
+            if (isSaved) savedSet.add(albums[idx].id);
+          });
+          setAlbumsSaved(savedSet);
         } else {
-          setAlbumsSaved([]);
+          setAlbumsSaved(new Set());
         }
       } catch {
-        setAlbumsSaved([]);
+        setAlbumsSaved(new Set());
       }
     };
     checkAlbumsSaved();
@@ -233,7 +237,7 @@ export default function ArtistProfile() {
               Guarda tus álbumes favoritos de {artist.name}
             </h2>
             <div className={styles.albumsGrid}>
-              {paginatedAlbums.map((album, idx) => (
+              {paginatedAlbums.map((album) => (
                 <div key={album.id} className={styles.albumCard}>
                   <div className={styles.albumImageWrapper}>
                     <Image
@@ -250,18 +254,18 @@ export default function ArtistProfile() {
                     <p className={styles.publishedDate}>
                       Publicado: {album.release_date}
                     </p>
-                    {albumsSaved[idx] ? (
+                    {albumsSaved.has(album.id) ? (
                       <button
                         className={styles.addButton}
                         style={{ backgroundColor: "#E3513D", color: "white" }}
-                        onClick={() => handleRemoveAlbum(album.id, idx)}
+                        onClick={() => handleRemoveAlbum(album.id)}
                       >
                         Remove album
                       </button>
                     ) : (
                       <button
                         className={styles.addButton}
-                        onClick={() => handleSaveAlbum(album.id, idx)}
+                        onClick={() => handleSaveAlbum(album.id)}
                       >
                         + Add album
                       </button>
