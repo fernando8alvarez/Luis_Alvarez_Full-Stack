@@ -88,7 +88,7 @@ La app estará disponible en `http://localhost:3000` por defecto.
 
 - El proyecto cumple con la maquetación, responsive e integración de las cuatro pantallas principales: Login, Buscador de artistas, Artista detalle y Mis álbumes guardados.
 - Se utilizó Next.js (React) y se priorizó la integración con la API de Spotify y la experiencia de usuario.
-- Tambien se logro estructura modular, variables de entorno, despliegue en Vercel, buenas prácticas de Git y Readme, y uso de librerías de CSS solo para optimizar tiempos.
+- Tambien se logro estructura modular, variables de entorno, despliegue en Vercel, buenas prácticas de Git y Readme, y uso de CSS puro para los estilos.
 
 ## 🧠 Autor
 
