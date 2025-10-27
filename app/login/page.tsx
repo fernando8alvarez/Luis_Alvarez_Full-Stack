@@ -42,6 +42,16 @@ export default function Login() {
     setCode(params.get("code"));
   }, []);
 
+  // Redirigir si ya hay usuario logueado
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      const token = localStorage.getItem("spotify_token");
+      if (token) {
+        window.location.replace("/search");
+      }
+    }
+  }, []);
+
   return (
     <div className={styles.container}>
       <header className={styles.header}>
