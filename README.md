@@ -1,4 +1,4 @@
-# 🛒 V-Music | Luis Alvarez - Full Stack
+# 🎵 V-Music | Luis Alvarez - Full Stack
 
 Este proyecto es una aplicación full stack llamada V-Music, que permite buscar, guardar y gestionar álbumes y artistas favoritos usando la API de Spotify. Incluye autenticación OAuth, manejo seguro de tokens, feedback visual con modales y loaders, y una interfaz moderna y responsiva. El objetivo es demostrar habilidades en integración de APIs externas, experiencia de usuario, seguridad y buenas prácticas en Next.js y React.
 
